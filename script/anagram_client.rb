@@ -28,7 +28,10 @@ class AnagramClient
   end
 
   def delete(path)
-    Net::HTTP.get_response(build_uri(path))
+    uri = build_uri(path)
+    req = Net::HTTP::Delete.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
+    http = Net::HTTP.new(uri.host, uri.port)
+    res = http.request(req)
   end
 
   private

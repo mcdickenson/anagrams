@@ -34,3 +34,17 @@ post '/words.json' do
 
   status 201
 end
+
+get '/anagrams/:word.:format?' do
+  word = params['word']
+  anagrams = if params['limit']
+    # if we only want a subset, make it a random subset (faster than retrieving the whole set)
+    redis.srandmember(key(word), params['limit'].to_i)
+  else
+    # don't include word as its own anagram
+    redis.smembers(key(word)) - [word]
+  end
+  anagrams ||= []
+
+  { anagrams: anagrams }.to_json
+end

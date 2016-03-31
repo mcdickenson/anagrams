@@ -1,7 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'sinatra', '~> 1.4.7'
-
-# Redis for storage
-gem 'redis', '~> 3.2.2'
-gem 'hiredis', '~> 0.6.1'

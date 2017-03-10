@@ -22,6 +22,13 @@ defmodule Anagrams.WordController do
     key = wordToKey(id)
 
     query = from w in Anagrams.Word, where: w.key == ^key, where: w.word != ^id
+
+    # optional limit parameter
+    if params["limit"] do
+      limit = String.to_integer(params["limit"])
+      query = from query, limit: ^limit
+    end
+
     words = query |> Anagrams.Repo.all
 
     render conn, "anagrams.json", words: words

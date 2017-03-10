@@ -3,7 +3,7 @@ defmodule Anagrams.WordController do
 
   defp saveWord(word) do
     word = %Anagrams.Word{key: wordToKey(word), word: word}
-    {:ok, inserted_word} = Anagrams.Repo.insert(word)
+    Anagrams.Repo.insert(word)
   end
 
   defp wordToKey(word) do
@@ -34,9 +34,19 @@ defmodule Anagrams.WordController do
     render conn, "anagrams.json", words: words
   end
 
-  def delete(conn, _params) do
-    Anagrams.Repo.delete_all(Anagrams.Word)
+  def delete(conn, params) do
+    response_code = 204
+    query = from w in Anagrams.Word
+
+    if params["id"] do
+      response_code = 200
+      [id, _] = String.split(params["id"], ".json")
+      query = from w in query, where: w.word == ^id
+    end
+
+    Anagrams.Repo.delete_all(query)
+
     conn
-    |> send_resp(410, "")
+    |> send_resp(response_code, "")
   end
 end
